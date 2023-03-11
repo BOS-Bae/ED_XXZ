@@ -73,3 +73,23 @@ function Act_H_1D_XXZ(bit_config,Δ,L,H_mat)
     H_mat[(Int)(bit_config)+1,(Int)(bit_config)+1] = -(Δ/2)*diag
     return mat_arr
 end
+
+function Build_Basis_N(bit_config, basis_N, N, L)
+    n_i = 0
+    for i = 0:L-1
+        n_i += (Int)(readbit(bit(bit_config;len=L),i+1))
+    end
+    if (n_i == N)
+        push!(basis_N, bit_config) 
+    end
+end
+
+function Build_H_N(H_tot, H_N, basis_N)
+    for m in 1:length(basis_N)
+        for n in 1:length(basis_N)
+            row = (Int)(basis_N[m]) + 1
+            col = (Int)(basis_N[n]) + 1
+            H_N[m,n] = H_tot[row,col]
+        end
+    end
+end
