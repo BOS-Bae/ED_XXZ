@@ -1,11 +1,10 @@
 include("ED_1D_XXZ.jl")
 
 L = 4
-N = 2^L
 Δ = 3
 
 mat_arr = []
-H_mat = zeros(N, N)
+H_mat = zeros(2^L, 2^L)
 
 
 config_arr = Binary_basis_gen_arr(L)
@@ -23,8 +22,8 @@ end
 #    H_mat[m,n] = val
 #end
 
-for m=1:N
-    for n=1:N
+for m=1:2^L
+    for n=1:2^L
         print((Int)(H_mat[m,n]),"  ")
     end
     print("\n")
