@@ -102,12 +102,55 @@ function Build_H_N(H_tot, H_N, basis_N)
 end
 
 
-function Build_Basis_N_k(bit_config, basis_N, N, L)
-    n_i = 0
-    for i = 0:L-1
-        n_i += (Int)(readbit(bit(bit_config;len=L),i+1))
-    end
-    if (n_i == N)
-        push!(basis_N, bit_config) 
+function Build_Basis_N_k(basis_N, basis_N_k, L, k)
+    
+    # Move spins in the right direction.
+    for bit_config in basis_N
+        min_val = 0
+        period_arr = []
+        saved_arr = Any[]
+
+        bit_val = bit_config
+
+        for p in 1:L
+            # p is period
+            if ((Int)(bit_val) < 2^(L-1))
+                bit_T = bit((2*(Int)(bit_val));len=L)
+                bit_int = (Int)(bit_T)
+                if (bit(bit_int;len=L) == bit_config)
+                    push!(saved_arr, [bit_int, p])
+                    push!(period_arr, p)
+                    println(bit(bit_int;len=L), " ",bit_val," ",p)
+                end
+            else
+                bit_subtract = 2*((Int)(bit_val) - 2^(L-1)) + 1
+                bit_T = bit((Int)(bit_subtract);len=L)
+                bit_int = (Int)(bit_T)
+                if (bit(bit_int;len=L) == bit_config)
+                    push!(saved_arr, [bit_int, p])
+                    push!(period_arr, p)
+                    println(bit(bit_int;len=L), " ",bit_val," ",p)
+                end
+            end
+
+            bit_val = bit(bit_int;len=L)
+            #println(bit_config, " ",bit_val," ",p)
+        end
+        uni_period = unique!(period_arr)
+
+        for k in 1:length(saved_arr)
+            for idx in 1:length(uni_period)
+                if saved_arr[k][2] == uni_period[idx]
+                end
+            end
+        end
+
+        min_val = minimum(saved_arr)[1]
+        #println(minimum(saved_arr)[1])
+        # period is minimum(saved_arr)[2]
+
+        if (((k*minimum(saved_arr)[2]) % L == 0) && (bit_config == bit(min_val; len=L)))
+            push!(basis_N_k, bit_config)
+        end
     end
 end
