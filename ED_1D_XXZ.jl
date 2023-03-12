@@ -16,71 +16,78 @@ function Binary_basis_gen_arr(L)
     return config_arr
 end
 
-function Idx_H_1D_XXZ(bit_config,Δ,L,mat_arr)
-    n_l = -1; n_lp = -1; mask = -1
-    diag = 0
+function Idx_H_1D_XXZ(config_arr,Δ,L,mat_arr)
+    for bit_config in config_arr
+        n_l = -1; n_lp = -1; mask = -1
+        diag = 0
 
-    for i = 0:L-1
-        if (i < L-1)
-            n_l = (Int)(readbit(bit(bit_config;len=L),i+1))
-            n_lp = (Int)(readbit(bit(bit_config;len=L),i+2))
-            mask = 2^(i+1) + 2^(i)
-        else
-            n_l = (Int)(readbit(bit(bit_config;len=L),L))
-            n_lp = (Int)(readbit(bit(bit_config;len=L),1))
-            mask = 2^(0) + 2^(L-1)
+        for i = 0:L-1
+            if (i < L-1)
+                n_l = (Int)(readbit(bit(bit_config;len=L),i+1))
+                n_lp = (Int)(readbit(bit(bit_config;len=L),i+2))
+                mask = 2^(i+1) + 2^(i)
+            else
+                n_l = (Int)(readbit(bit(bit_config;len=L),L))
+                n_lp = (Int)(readbit(bit(bit_config;len=L),1))
+                mask = 2^(0) + 2^(L-1)
+            end
+
+            diag += (2*n_l - 1)*(2*n_lp - 1)
+
+            if n_l != n_lp
+                mask = bit(mask;len=L)
+                new_hop = (Int)(bit(flip(bit_config,mask);len=L))
+
+                push!(mat_arr, [(Int)(bit_config),(Int)(new_hop),-1])
+                push!(mat_arr, [(Int)(new_hop),(Int)(bit_config),-1])
+            end
         end
-
-        diag += (2*n_l - 1)*(2*n_lp - 1)
-
-        if n_l != n_lp
-            mask = bit(mask;len=L)
-            new_hop = (Int)(bit(flip(bit_config,mask);len=L))
-
-            push!(mat_arr, [(Int)(bit_config),(Int)(new_hop),-1])
-            push!(mat_arr, [(Int)(new_hop),(Int)(bit_config),-1])
-        end
+        push!(mat_arr, [(Int)(bit_config),(Int)(bit_config),-(Δ/2)*diag])
     end
-    push!(mat_arr, [(Int)(bit_config),(Int)(bit_config),-(Δ/2)*diag])
+
     return mat_arr
 end
 
-function Act_H_1D_XXZ(bit_config,Δ,L,H_mat)
-    n_l = -1; n_lp = -1; mask = -1
-    diag = 0
+function Act_H_1D_XXZ(config_arr,Δ,L,H_mat)
+    for bit_config in config_arr
+        n_l = -1; n_lp = -1; mask = -1
+        diag = 0
 
-    for i = 0:L-1
-        if (i < L-1)
-            n_l = (Int)(readbit(bit(bit_config;len=L),i+1))
-            n_lp = (Int)(readbit(bit(bit_config;len=L),i+2))
-            mask = 2^(i+1) + 2^(i)
-        else
-            n_l = (Int)(readbit(bit(bit_config;len=L),L))
-            n_lp = (Int)(readbit(bit(bit_config;len=L),1))
-            mask = 2^(0) + 2^(L-1)
+        for i = 0:L-1
+            if (i < L-1)
+                n_l = (Int)(readbit(bit(bit_config;len=L),i+1))
+                n_lp = (Int)(readbit(bit(bit_config;len=L),i+2))
+                mask = 2^(i+1) + 2^(i)
+            else
+                n_l = (Int)(readbit(bit(bit_config;len=L),L))
+                n_lp = (Int)(readbit(bit(bit_config;len=L),1))
+                mask = 2^(0) + 2^(L-1)
+            end
+
+            diag += (2*n_l - 1)*(2*n_lp - 1)
+
+            if n_l != n_lp
+                mask = bit(mask;len=L)
+                new_hop = (Int)(bit(flip(bit_config,mask);len=L))
+
+                H_mat[(Int)(bit_config)+1,(Int)(new_hop)+1] = -1
+                H_mat[(Int)(new_hop)+1,(Int)(bit_config)+1] = -1
+            end
         end
-
-        diag += (2*n_l - 1)*(2*n_lp - 1)
-
-        if n_l != n_lp
-            mask = bit(mask;len=L)
-            new_hop = (Int)(bit(flip(bit_config,mask);len=L))
-
-            H_mat[(Int)(bit_config)+1,(Int)(new_hop)+1] = -1
-            H_mat[(Int)(new_hop)+1,(Int)(bit_config)+1] = -1
-        end
+        H_mat[(Int)(bit_config)+1,(Int)(bit_config)+1] = -(Δ/2)*diag
     end
-    H_mat[(Int)(bit_config)+1,(Int)(bit_config)+1] = -(Δ/2)*diag
     return mat_arr
 end
 
-function Build_Basis_N(bit_config, basis_N, N, L)
-    n_i = 0
-    for i = 0:L-1
-        n_i += (Int)(readbit(bit(bit_config;len=L),i+1))
-    end
-    if (n_i == N)
-        push!(basis_N, bit_config) 
+function Build_Basis_N(config_arr, basis_N, N, L)
+    for bit_config in config_arr
+        n_i = 0
+        for i = 0:L-1
+            n_i += (Int)(readbit(bit(bit_config;len=L),i+1))
+        end
+        if (n_i == N)
+            push!(basis_N, bit_config) 
+        end
     end
 end
 
@@ -91,5 +98,16 @@ function Build_H_N(H_tot, H_N, basis_N)
             col = (Int)(basis_N[n]) + 1
             H_N[m,n] = H_tot[row,col]
         end
+    end
+end
+
+
+function Build_Basis_N_k(bit_config, basis_N, N, L)
+    n_i = 0
+    for i = 0:L-1
+        n_i += (Int)(readbit(bit(bit_config;len=L),i+1))
+    end
+    if (n_i == N)
+        push!(basis_N, bit_config) 
     end
 end
