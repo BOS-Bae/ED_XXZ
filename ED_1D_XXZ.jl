@@ -1,13 +1,8 @@
 using BitBasis
 
-# config_arr = []
-# ascending_arr = []
-
-# Δ = 1.5
-# L = 4
-
 # We apply PBC on the model.
 
+# Build basis for full spectrum.
 function Binary_basis_gen_arr(L)
     config_arr = []
     for i in 0:(2^L -1)
@@ -16,38 +11,7 @@ function Binary_basis_gen_arr(L)
     return config_arr
 end
 
-function Idx_H_1D_XXZ(config_arr,Δ,L,mat_arr)
-    for bit_config in config_arr
-        n_l = -1; n_lp = -1; mask = -1
-        diag = 0
-
-        for i = 0:L-1
-            if (i < L-1)
-                n_l = (Int)(readbit(bit(bit_config;len=L),i+1))
-                n_lp = (Int)(readbit(bit(bit_config;len=L),i+2))
-                mask = 2^(i+1) + 2^(i)
-            else
-                n_l = (Int)(readbit(bit(bit_config;len=L),L))
-                n_lp = (Int)(readbit(bit(bit_config;len=L),1))
-                mask = 2^(0) + 2^(L-1)
-            end
-
-            diag += (2*n_l - 1)*(2*n_lp - 1)
-
-            if n_l != n_lp
-                mask = bit(mask;len=L)
-                new_hop = (Int)(bit(flip(bit_config,mask);len=L))
-
-                push!(mat_arr, [(Int)(bit_config),(Int)(new_hop),-1])
-                push!(mat_arr, [(Int)(new_hop),(Int)(bit_config),-1])
-            end
-        end
-        push!(mat_arr, [(Int)(bit_config),(Int)(bit_config),-(Δ/2)*diag])
-    end
-
-    return mat_arr
-end
-
+# Insert elements of null matrix to make it Hamiltonian for 1D XXZ model.
 function Act_H_1D_XXZ(config_arr,Δ,L,H_mat)
     for bit_config in config_arr
         n_l = -1; n_lp = -1; mask = -1
@@ -79,6 +43,7 @@ function Act_H_1D_XXZ(config_arr,Δ,L,H_mat)
     return mat_arr
 end
 
+# Set the basis of N-spin sector.
 function Build_Basis_N(config_arr, basis_N, N, L)
     for bit_config in config_arr
         n_i = 0
@@ -91,6 +56,7 @@ function Build_Basis_N(config_arr, basis_N, N, L)
     end
 end
 
+# Block diagonalization : Insert elements (of null matrix) to make it Hamiltonian for N-sector of 1D XXZ model.
 function Build_H_N(H_tot, H_N, basis_N)
     for m in 1:length(basis_N)
         for n in 1:length(basis_N)
@@ -102,6 +68,7 @@ function Build_H_N(H_tot, H_N, basis_N)
 end
 
 
+# Function below is not completed yet.
 function Build_Basis_N_k(basis_N, basis_N_k, L, k)
     
     # Move spins in the right direction.

@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-include("ED_XXZ.jl")
+include("ED_1D_XXZ.jl")
 
 L = 8
 Δ = 1
@@ -17,7 +17,7 @@ config_arr = Binary_basis_gen_arr(L)
 #print(config_arr)
 
 Build_Basis_N(config_arr, basis_N, N, L)
-#Idx_H_1D_XXZ(config_arr,Δ,L,mat_arr)
+
 Act_H_1D_XXZ(config_arr,Δ,L,H_mat)
 
 #Build_Basis_N_k(basis_N, basis_N_k, L, k)
