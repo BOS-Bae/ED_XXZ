@@ -4,6 +4,17 @@ This is the code to conduct block diagonalization and set the binary basis for 1
 
 by using two libraries of Julia, which are BitBasis and LinearAlgebra.
 
+
+## $L=8, \ N=4, \Delta = 1/2$
+
+ED result for 1D XXZ chain with 8 sites and 4 particles and $\Delta = 1/2$.
+
+![alt text](https://github.com/BOS-Bae/ED_XXZ/blob/main/L8N4Dh.png?raw=true)
+
+x-axis means eigenstate index which is diveded by dimension of basis, and
+
+y-axis shows energy eigenvalues.
+
 ## Reference
 
 I referred to pseudocodes in the following paper in writing this ED code.

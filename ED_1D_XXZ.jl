@@ -43,7 +43,7 @@ function Act_H_1D_XXZ(config_arr,Δ,L,H_mat)
     return mat_arr
 end
 
-# Set the basis of N-spin sector.
+# Set the basis of N-particle sector.
 function Build_Basis_N(config_arr, basis_N, N, L)
     for bit_config in config_arr
         n_i = 0
