@@ -5,6 +5,7 @@ This is the code to conduct block diagonalization and set the binary basis for 1
 by using two libraries of Julia, which are BitBasis and LinearAlgebra.
 
 BitBasis : https://docs.juliahub.com/BitBasis/Iufdn/0.7.0/tutorial.html
+
 LinearAlgebra : https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/
 
 ## $L=8, \ N=4, \Delta = 1/2$
