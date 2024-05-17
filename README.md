@@ -20,6 +20,6 @@ y-axis shows energy eigenvalues.
 
 ## Reference
 
-I referred to pseudocodes in the following paper in writing this ED code.
+I referred to pseudocodes in the following paper when writing this ED code.
 
 https://doi.org/10.3938/jkps.76.670 : 'Guide to Exact Diagonalization Study of Quantum Thermalization (Jung-Hoon Jung and Jae Dong Noh, 2020)'
